@@ -27,6 +27,17 @@ namespace GameEngine::Core
 			Matrix& operator=(Matrix&&) = default;
 
 		public:
+			static inline Matrix<T, width, width> GetRotateYMatrix(float phi) {
+				Matrix<T, width, width> rotate_matrix = Identity();
+
+				rotate_matrix.m_data[0] = cos(phi);
+				rotate_matrix.m_data[2 * width + 2] = cos(phi);
+				rotate_matrix.m_data[2] = -sin(phi);
+				rotate_matrix.m_data[2 * width] = sin(phi);
+
+				return rotate_matrix;
+			}
+
 			static inline Matrix<T, width, height> Identity()
 			{
 				static_assert(width == height);
@@ -54,6 +65,23 @@ namespace GameEngine::Core
 				}
 
 				return matrix;
+			}
+
+			inline void Move(float v0, float v1, float v2) {
+				static float t = 0.001;
+
+				m_data[3 * width] = v0 * t;
+				m_data[3 * width + 1] = v1 * t;
+				m_data[3 * width + 2] = v2 * t;
+
+				t += 0.001;
+			}
+
+			inline void RotateY() {
+				static float t = 0.001;
+				Matrix<T, width, width> rotate_matrix = GetRotateYMatrix(t);
+				*this = *this * rotate_matrix;
+				t += 0.001;
 			}
 
 			template<IndexType newWidth>
