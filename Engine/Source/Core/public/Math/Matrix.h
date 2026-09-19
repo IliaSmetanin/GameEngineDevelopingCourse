@@ -68,23 +68,25 @@ namespace GameEngine::Core
 				return matrix;
 			}
 
-			inline void Move(float v0, float v1, float v2)
+			inline void SetTranslationVector(float v0, float v1, float v2)
 			{
-				static float t = 0.001;
+				static float t = 0.01;
 
 				m_data[3 * width] = v0 * t;
 				m_data[3 * width + 1] = v1 * t;
 				m_data[3 * width + 2] = v2 * t;
 
-				t += 0.001;
+				t += 0.01;
 			}
 
-			inline void RotateY()
+			inline void SetRotationY()
 			{
-				static float t = 0.001;
+				static float t = 0.01;
+
 				Matrix<T, width, width> rotate_matrix = GetRotateYMatrix(t);
 				*this = *this * rotate_matrix;
-				t += 0.001;
+
+				t += 0.01;
 			}
 
 			template<IndexType newWidth>
