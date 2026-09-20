@@ -272,6 +272,10 @@ namespace GameEngine
 			Math::Matrix4x4f proj = Core::Math::ProjectionMatrixLH(0.25f * DirectX::XM_PI, Core::MainWindowsApplication->GetAspectRatio(), 1.0f, 1000.0f);
 
 			Math::Matrix4x4f world = Math::Matrix4x4f::Identity();
+			//world.m_data[0] = 3;
+			//world.m_data[15] = 3;
+			//world.SetTranslationVector(0.5, 0, 0);
+			world.SetRotationY();
 			Math::Matrix4x4f worldViewProj = world * view * proj;
 
 			ObjectConstants objConstants;
