@@ -5,6 +5,8 @@
 #include <Window/IWindow.h>
 #include <Window.h>
 
+#include "INIReader.h"
+
 namespace GameEngine::Core
 {
     void OnMouseDown(WPARAM btnState, int x, int y, Window* window)
@@ -45,5 +47,54 @@ namespace GameEngine::Core
         }
 
         window->SetMousePos(x, y);
+    }
+
+    void OnKeyDown(WPARAM wParam, Camera* camera) {
+        // После раскомментирования строчки ниже, все падает с ошибкой линковки
+        // static INIReader reader("camera.ini");
+
+        using STCLOCK_t = std::chrono::steady_clock::time_point;
+
+        Math::Vector3f offset;
+        Math::Vector3f position = camera->GetPosition();
+
+        STCLOCK_t last = std::chrono::steady_clock::now();
+
+        switch (wParam)
+        {
+        case 'A':
+            while (GetAsyncKeyState(wParam) < 0) {
+                STCLOCK_t current = std::chrono::steady_clock::now();
+                std::chrono::duration<float, std::ratio<1, 1>> frame = current - last;
+                last = current;
+
+                float dt = frame.count();
+
+                offset = Math::Vector3f(-(camera->GetViewDir().z), 0.0, camera->GetViewDir().x).Normalized();
+
+                position = position + offset * dt;
+
+                camera->SetPosition(position);
+            }
+
+            return;
+        case 'D':
+            offset = Math::Vector3f(camera->GetViewDir().z, 0.0, -(camera->GetViewDir().x));
+            break;
+        case 'W':
+            offset = camera->GetViewDir() * 1.0;
+            break;
+        case 'S':
+            offset = camera->GetViewDir() * -1.0;
+            break;
+        case 'R':
+            camera->Reset();
+            return;
+        default:
+            return;
+        }
+
+        position = position + offset;
+        camera->SetPosition(position);
     }
 }

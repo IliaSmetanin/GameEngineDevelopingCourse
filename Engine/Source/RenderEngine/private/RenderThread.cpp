@@ -23,6 +23,7 @@ namespace GameEngine::Render
 		frameMutex[m_CurMainFrame].lock();
 
 		m_Thread = std::make_unique<std::jthread>(RunThisThread, this);
+		// why do we use std::jthread if there is 'detach' after it? Why not std::thread?
 		m_Thread->detach();
 	}
 

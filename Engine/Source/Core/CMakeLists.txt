@@ -35,6 +35,16 @@ target_compile_definitions(Core
 		Core_EXPORTS
 		UNICODE)
 
+add_library(inih STATIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/../inih/ini.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../inih/cpp/INIReader.cpp
+)
+
+target_include_directories(inih PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/../inih
+	${CMAKE_CURRENT_SOURCE_DIR}/../inih/cpp
+)
+
 # Set Sources
 target_sources(Core
 	PRIVATE ${PRIVATE_FILES}
@@ -47,6 +57,8 @@ target_sources(Core
 target_include_directories(Core 
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private
+	PRIVATE ${INIH_PATH}
+	PRIVATE ${INIH_PATH}/cpp
 )
 
 # windows-specific
@@ -59,6 +71,7 @@ endif()
 
 target_link_libraries(Core PRIVATE
 	Math
+	inih
 )
 
 target_precompile_headers(Core

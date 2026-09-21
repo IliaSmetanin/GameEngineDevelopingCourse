@@ -20,6 +20,7 @@ namespace GameEngine
 			Math::Vector3f GetViewDir() const { return m_ViewDir; }
 			void SetViewDir(Math::Vector3f viewDir) { m_ViewDir = viewDir; }
 			void Rotate(float yaw, float pitch);
+			void Reset() noexcept;
 
 		private:
 			Math::Vector3f m_Position;
