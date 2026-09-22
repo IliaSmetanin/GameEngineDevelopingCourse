@@ -41,12 +41,21 @@ target_sources(Core
 	PRIVATE ${PUBLIC_FILES}
 	PRIVATE ${PLATFORM_PUBLIC_FILES}
 	PRIVATE ${PLATFORM_PRIVATE_FILES}
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../inih/ini.c
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../inih/cpp/INIReader.cpp
+)
+
+set_source_files_properties(
+    ${CMAKE_CURRENT_SOURCE_DIR}/../inih/ini.c
+    PROPERTIES SKIP_PRECOMPILE_HEADERS ON
 )
 
 # include dir
 target_include_directories(Core 
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../inih
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../inih/cpp
 )
 
 # windows-specific

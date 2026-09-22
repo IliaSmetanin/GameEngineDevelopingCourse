@@ -1,3 +1,4 @@
+#include <Camera.h>
 #include <RenderCommands.h>
 #include <RenderEngine.h>
 #include <RenderThread.h>
@@ -23,6 +24,7 @@ namespace GameEngine::Render
 		frameMutex[m_CurMainFrame].lock();
 
 		m_Thread = std::make_unique<std::jthread>(RunThisThread, this);
+		// why do we use std::jthread if there is 'detach' after it? Why not std::thread?
 		m_Thread->detach();
 	}
 
@@ -67,6 +69,14 @@ namespace GameEngine::Render
 					std::forward<Args>(args)...)
 			);
 			break;
+		/*case ERC::UpdateCamera:
+			m_commands[m_CurMainFrame].push_back(
+				new EnqueuedRenderCommand(
+					[](GameEngine::Core::Camera* camera, Math::Vector3f& traslation) { camera->Move(traslation); },
+					std::forward<Args>(args)...)
+			);
+			break;*/
+
 		default:
 			assert(0);
 			break;
