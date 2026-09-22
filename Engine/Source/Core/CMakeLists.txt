@@ -35,30 +35,27 @@ target_compile_definitions(Core
 		Core_EXPORTS
 		UNICODE)
 
-add_library(inih STATIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/../inih/ini.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/../inih/cpp/INIReader.cpp
-)
-
-target_include_directories(inih PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/../inih
-	${CMAKE_CURRENT_SOURCE_DIR}/../inih/cpp
-)
-
 # Set Sources
 target_sources(Core
 	PRIVATE ${PRIVATE_FILES}
 	PRIVATE ${PUBLIC_FILES}
 	PRIVATE ${PLATFORM_PUBLIC_FILES}
 	PRIVATE ${PLATFORM_PRIVATE_FILES}
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../inih/ini.c
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../inih/cpp/INIReader.cpp
+)
+
+set_source_files_properties(
+    ${CMAKE_CURRENT_SOURCE_DIR}/../inih/ini.c
+    PROPERTIES SKIP_PRECOMPILE_HEADERS ON
 )
 
 # include dir
 target_include_directories(Core 
 	PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public
 	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/private
-	PRIVATE ${INIH_PATH}
-	PRIVATE ${INIH_PATH}/cpp
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../inih
+	PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../inih/cpp
 )
 
 # windows-specific
@@ -71,7 +68,6 @@ endif()
 
 target_link_libraries(Core PRIVATE
 	Math
-	inih
 )
 
 target_precompile_headers(Core

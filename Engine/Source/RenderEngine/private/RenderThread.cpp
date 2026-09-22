@@ -1,3 +1,4 @@
+#include <Camera.h>
 #include <RenderCommands.h>
 #include <RenderEngine.h>
 #include <RenderThread.h>
@@ -68,6 +69,14 @@ namespace GameEngine::Render
 					std::forward<Args>(args)...)
 			);
 			break;
+		/*case ERC::UpdateCamera:
+			m_commands[m_CurMainFrame].push_back(
+				new EnqueuedRenderCommand(
+					[](GameEngine::Core::Camera* camera, Math::Vector3f& traslation) { camera->Move(traslation); },
+					std::forward<Args>(args)...)
+			);
+			break;*/
+
 		default:
 			assert(0);
 			break;

@@ -91,16 +91,23 @@ namespace GameEngine
 				return result;
 			}
 
-			inline Vector3<T> operator+(Vector3<T> other)
+			inline Vector3<T> operator+=(Vector3<T> other)
 			{
-				Vector3<T> result;
-				result.x = x + other.x;
-				result.y = y + other.y;
-				result.z = z + other.z;
+				x += other.x;
+				y += other.y;
+				z += other.z;
+
+				return *this;
+			}
+
+			inline Vector3<T> operator+(Vector3<T> other) const
+			{
+				Vector3<T> result(*this);
+				result += other;
 				return result;
 			}
 
-			inline Vector3<T> operator-(Vector3<T> other)
+			inline Vector3<T> operator-(Vector3<T> other) const
 			{
 				Vector3<T> result;
 				result.x = x - other.x;
@@ -109,7 +116,7 @@ namespace GameEngine
 				return result;
 			}
 
-			inline Vector3<T> operator-()
+			inline Vector3<T> operator-() const
 			{
 				Vector3<T> result;
 				result.x = -x;
@@ -118,12 +125,12 @@ namespace GameEngine
 				return result;
 			}
 
-			inline float operator*(Vector3<T> other)
+			inline float operator*(Vector3<T> other) const
 			{
 				return x * other.x + y * other.y + z * other.z;
 			}
 
-			inline Vector3<T> operator*(float scale)
+			inline Vector3<T> operator*(float scale) const
 			{
 				return Vector3<T>(x * scale, y * scale, z * scale);
 			}

@@ -2,6 +2,7 @@
 
 #include <Camera.h>
 #include <Constants.h>
+#include <Timer.h>
 #include <Window/IWindow.h>
 #include <Window.h>
 
@@ -9,6 +10,8 @@
 
 namespace GameEngine::Core
 {
+    static const float kMinTimeBetweenPresses = 0.1;
+
     void OnMouseDown(WPARAM btnState, int x, int y, Window* window)
     {
         window->SetMousePos(x, y);
@@ -49,52 +52,77 @@ namespace GameEngine::Core
         window->SetMousePos(x, y);
     }
 
-    void OnKeyDown(WPARAM wParam, Camera* camera) {
-        // После раскомментирования строчки ниже, все падает с ошибкой линковки
-        // static INIReader reader("camera.ini");
+    void OnKeyDown(WPARAM wParam, Camera* camera)
+    {
+        std::string path = "../../../../../Configs/camera.ini";
 
-        using STCLOCK_t = std::chrono::steady_clock::time_point;
+        static INIReader reader(path);
+        assert(reader.ParseError() >= 0);
 
-        Math::Vector3f offset;
+        Math::Vector3f offset = Math::Vector3f::Zero();
         Math::Vector3f position = camera->GetPosition();
 
-        STCLOCK_t last = std::chrono::steady_clock::now();
+        static Timer timer;
+        float dt;
 
-        switch (wParam)
+        //static int Forward(reader.GetInteger("Camera", "Forward", 'W'));
+        //static int Backward(reader.GetInteger("Camera", "Backward", 'S'));
+        //static int Left(reader.GetInteger("Camera", "Left", 'A'));
+        //static int Right(reader.GetInteger("Camera", "Right", 'D'));
+        //static int Reset(reader.GetInteger("Camera", "Reset", 'R'));
+
+        static int Forward = reader.Get("Camera", "Forward", "W")[0];
+        static int Backward = reader.Get("Camera", "Backward", "S")[0];
+        static int Left = reader.Get("Camera", "Left", "A")[0];
+        static int Right = reader.Get("Camera", "Right", "D")[0];
+        static int Reset = reader.Get("Camera", "Reset", "R")[0];
+
+        if (wParam == Forward)
         {
-        case 'A':
-            while (GetAsyncKeyState(wParam) < 0) {
-                STCLOCK_t current = std::chrono::steady_clock::now();
-                std::chrono::duration<float, std::ratio<1, 1>> frame = current - last;
-                last = current;
+            timer.Tick();
+            dt = timer.GetDeltaTime() < kMinTimeBetweenPresses ? timer.GetDeltaTime() : kMinTimeBetweenPresses;
 
-                float dt = frame.count();
+            offset += camera->GetForwardDir() * dt;
+            //offset = camera->GetViewDir() * 1.0;
+        }
+        else if (wParam == Backward)
+        {
+            timer.Tick();
+            dt = timer.GetDeltaTime() < kMinTimeBetweenPresses ? timer.GetDeltaTime() : kMinTimeBetweenPresses;
 
-                offset = Math::Vector3f(-(camera->GetViewDir().z), 0.0, camera->GetViewDir().x).Normalized();
+            offset += -camera->GetForwardDir() * dt;
+        }
+        else if (wParam == Left)
+        {
+            timer.Tick();
+            dt = timer.GetDeltaTime() < kMinTimeBetweenPresses ? timer.GetDeltaTime() : kMinTimeBetweenPresses;
 
-                position = position + offset * dt;
+            offset += -camera->GetRightDir() * dt;
+        }
+        else if (wParam == Right)
+        {
+            timer.Tick();
+            dt = timer.GetDeltaTime() < kMinTimeBetweenPresses ? timer.GetDeltaTime() : kMinTimeBetweenPresses;
 
-                camera->SetPosition(position);
-            }
-
-            return;
-        case 'D':
-            offset = Math::Vector3f(camera->GetViewDir().z, 0.0, -(camera->GetViewDir().x));
-            break;
-        case 'W':
-            offset = camera->GetViewDir() * 1.0;
-            break;
-        case 'S':
-            offset = camera->GetViewDir() * -1.0;
-            break;
-        case 'R':
+            offset += camera->GetRightDir() * dt;
+        }
+        else if (wParam == Reset)
+        {
             camera->Reset();
             return;
-        default:
+        }
+        else
+        {
             return;
         }
 
         position = position + offset;
         camera->SetPosition(position);
+    }
+
+    void Check() {
+        constexpr int g = std::string("A")[0];
+        constexpr int b = g;
+        static_assert(g == 'A');
     }
 }
