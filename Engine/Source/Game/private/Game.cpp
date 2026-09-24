@@ -65,7 +65,9 @@ namespace GameEngine
 			// Showcase
 			if (i == 0)
 			{
-				pos.x += 0.5f * dt;
+				m_Objects[i]->Jump(dt);
+				m_Objects[i]->SetPosition(m_Objects[i]->GetPosition(), m_renderThread->GetMainFrame());
+				continue;
 			}
 			else if (i == 1)
 			{
