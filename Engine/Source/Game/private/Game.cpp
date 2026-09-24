@@ -21,6 +21,9 @@ namespace GameEngine
 		for (int i = 0; i < 3; ++i)
 		{
 			m_Objects.push_back(new GameObject());
+			if (i == 1) {
+				m_Objects[i]->SetPosition(Math::Vector3f(0.0f, 0.0f, 5.0f), m_renderThread->GetMainFrame());
+			}
 			Render::RenderObject** renderObject = m_Objects.back()->GetRenderObjectRef();
 			m_renderThread->EnqueueCommand(Render::ERC::CreateRenderObject, RenderCore::DefaultGeometry::Cube(), renderObject);
 		}
@@ -71,7 +74,10 @@ namespace GameEngine
 			}
 			else if (i == 1)
 			{
-				pos.y -= 0.5f * dt;
+				static Math::Vector3f equilibrium_point(0.0, 0.0, 0.0);
+				m_Objects[i]->ForwardBackward(dt, equilibrium_point);
+				m_Objects[i]->SetPosition(m_Objects[i]->GetPosition(), m_renderThread->GetMainFrame());
+				continue;
 			}
 			else if (i == 2)
 			{

@@ -12,9 +12,13 @@ namespace GameEngine
 		GameObject() = default;
 
 	public:
+		inline static const float kEpsilon = 1e-7;
 		inline static const float kJumpSpeed = 10.0f;
 		inline static const float kGravityAcceleration = 9.81f;
-		inline static const float kEpsilon = 1e-7;
+
+		inline static const float kStartOffset = 1.0;
+		inline static const float kFluctuationAcceleration = 5.0f;
+
 
 		Render::RenderObject** GetRenderObjectRef() { return &m_RenderObject; }
 
@@ -31,6 +35,14 @@ namespace GameEngine
 			m_Position.y += m_SpeedVector.y * dt - 0.5f * kGravityAcceleration * dt * dt;
 			m_SpeedVector.y -= kGravityAcceleration * dt;
  		}
+
+		void ForwardBackward(float dt, Math::Vector3f equilibrium_point) {
+			float offset = m_Position.z - equilibrium_point.z;
+			float acceleration = -kFluctuationAcceleration * offset;
+
+			m_Position.z += m_SpeedVector.z * dt + 0.5 * acceleration * dt * dt;
+			m_SpeedVector.z += acceleration * dt;
+		}
 
 		void SetPosition(Math::Vector3f position, size_t frame)
 		{
