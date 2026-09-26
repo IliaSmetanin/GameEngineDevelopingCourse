@@ -26,6 +26,10 @@ namespace GameEngine
 				return KeyboardButton::W;
 			case 'D':
 				return KeyboardButton::D;
+			case 'Q':
+				return KeyboardButton::Q;
+			case 'E':
+				return KeyboardButton::E;
 			default:
 				return KeyboardButton::UNKNOWN;
 			}
