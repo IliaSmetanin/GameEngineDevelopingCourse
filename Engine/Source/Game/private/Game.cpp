@@ -24,14 +24,27 @@ namespace GameEngine
 			if (i == 1) {
 				m_Objects[i]->SetPosition(Math::Vector3f(0.0f, 0.0f, 5.0f), m_renderThread->GetMainFrame());
 			}
+			if (i == 2) {
+				m_Objects[i]->SetMovable();
+			}
 			Render::RenderObject** renderObject = m_Objects.back()->GetRenderObjectRef();
 			m_renderThread->EnqueueCommand(Render::ERC::CreateRenderObject, RenderCore::DefaultGeometry::Cube(), renderObject);
 		}
 
-		Core::g_InputHandler->RegisterCallback("GoForward", [&]() { Core::g_MainCamera->Move(Core::g_MainCamera->GetViewDir()); });
-		Core::g_InputHandler->RegisterCallback("GoBack", [&]() { Core::g_MainCamera->Move(-Core::g_MainCamera->GetViewDir()); });
-		Core::g_InputHandler->RegisterCallback("GoRight", [&]() { Core::g_MainCamera->Move(Core::g_MainCamera->GetRightDir()); });
-		Core::g_InputHandler->RegisterCallback("GoLeft", [&]() { Core::g_MainCamera->Move(-Core::g_MainCamera->GetRightDir()); });
+		Core::g_InputHandler->RegisterCallback("GoForward", []() { Core::g_MainCamera->Move(Core::g_MainCamera->GetViewDir()); });
+		Core::g_InputHandler->RegisterCallback("GoBack", []() { Core::g_MainCamera->Move(-Core::g_MainCamera->GetViewDir()); });
+		Core::g_InputHandler->RegisterCallback("GoRight", []() { Core::g_MainCamera->Move(Core::g_MainCamera->GetRightDir()); });
+		Core::g_InputHandler->RegisterCallback("GoLeft", []() { Core::g_MainCamera->Move(-Core::g_MainCamera->GetRightDir()); });
+		Core::g_InputHandler->RegisterCallback("MoveObjectRight", [this]() { for (size_t i = 0; i < this->m_Objects.size(); ++i) {
+			if (m_Objects[i]->IsMovable()) {
+				m_Objects[i]->Move(Math::Vector3f(1.0f, 0.0f, 0.0f));
+			}
+			}; });
+		Core::g_InputHandler->RegisterCallback("MoveObjectLeft", [this]() { for (size_t i = 0; i < this->m_Objects.size(); ++i) {
+			if (m_Objects[i]->IsMovable()) {
+				m_Objects[i]->Move(Math::Vector3f(-1.0f, 0.0f, 0.0f));
+			}
+		}; });
 	}
 
 	void Game::Run()
@@ -81,10 +94,12 @@ namespace GameEngine
 			}
 			else if (i == 2)
 			{
-				pos.x += 0.5f * dt;
-				pos.y -= 0.5f * dt;
+				//pos.x += 0.5f * dt;
+				//pos.y -= 0.5f * dt;
+				m_Objects[i]->Update(dt);
+				m_Objects[i]->SetPosition(m_Objects[i]->GetPosition(), m_renderThread->GetMainFrame());
 			}
-			m_Objects[i]->SetPosition(pos, m_renderThread->GetMainFrame());
+			//m_Objects[i]->SetPosition(pos, m_renderThread->GetMainFrame());
 		}
 	}
 }

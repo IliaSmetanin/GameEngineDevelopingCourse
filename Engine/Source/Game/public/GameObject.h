@@ -12,12 +12,14 @@ namespace GameEngine
 		GameObject() = default;
 
 	public:
-		inline static const float kEpsilon = 1e-7;
+		inline static const float kEpsilon = 1e-7f;
 		inline static const float kJumpSpeed = 10.0f;
 		inline static const float kGravityAcceleration = 9.81f;
 
 		inline static const float kStartOffset = 1.0;
 		inline static const float kFluctuationAcceleration = 5.0f;
+
+		inline static const float kMoveSpeed = 10.0f;
 
 
 		Render::RenderObject** GetRenderObjectRef() { return &m_RenderObject; }
@@ -36,12 +38,33 @@ namespace GameEngine
 			m_SpeedVector.y -= kGravityAcceleration * dt;
  		}
 
-		void ForwardBackward(float dt, Math::Vector3f equilibrium_point) {
+		void ForwardBackward(float dt, Math::Vector3f equilibrium_point)
+		{
 			float offset = m_Position.z - equilibrium_point.z;
 			float acceleration = -kFluctuationAcceleration * offset;
 
 			m_Position.z += m_SpeedVector.z * dt + 0.5 * acceleration * dt * dt;
 			m_SpeedVector.z += acceleration * dt;
+		}
+
+		void Move(Math::Vector3f dir)
+		{
+			m_CurrentMoveDir = m_CurrentMoveDir + dir.Normalized();
+		}
+
+		void Update(float dt)
+		{
+			m_Position = m_Position + m_CurrentMoveDir.Normalized() * kMoveSpeed * dt;
+			m_CurrentMoveDir = Math::Vector3f::Zero();
+		}
+
+		void SetMovable() 
+		{
+			m_Movable = 1;
+		}
+
+		bool IsMovable() const noexcept {
+			return m_Movable;
 		}
 
 		void SetPosition(Math::Vector3f position, size_t frame)
@@ -59,11 +82,16 @@ namespace GameEngine
 			return m_Position;
 		}
 
+
 	protected:
+		bool m_Movable = 0;
+
 		Render::RenderObject* m_RenderObject = nullptr;
 
 		Math::Vector3f m_Position = Math::Vector3f::Zero();
 		Math::Vector3f m_SpeedVector = Math::Vector3f::Zero();
 		//Math::Vector3f m_AccelVector = Math::Vector3f::Zero()
+
+		Math::Vector3f m_CurrentMoveDir = Math::Vector3f::Zero();
 	};
 }
