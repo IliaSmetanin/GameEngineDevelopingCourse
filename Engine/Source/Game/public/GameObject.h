@@ -12,6 +12,10 @@ namespace GameEngine
 		GameObject() = default;
 
 	public:
+		enum class ObjectType {
+			Jumping, Fluctuating, Movable
+		};
+
 		inline static const float kEpsilon = 1e-7f;
 		inline static const float kJumpSpeed = 10.0f;
 		inline static const float kGravityAcceleration = 9.81f;
@@ -24,13 +28,14 @@ namespace GameEngine
 
 		Render::RenderObject** GetRenderObjectRef() { return &m_RenderObject; }
 
-		void Jump(float dt)
+		void Jump(float y_floor, float dt)
 		{
-			if (m_Position.y < 0.0f) {
-				m_Position.y = m_SpeedVector.y = 0.0f;
+			if (m_Position.y < y_floor) {
+				m_Position.y = y_floor;
+				m_SpeedVector.y = 0.0f;
 			}
 
-			if (std::fabs(m_Position.y - 0.0f) < kEpsilon) {
+			if (std::fabs(m_Position.y - y_floor) < kEpsilon) {
 				m_SpeedVector.y = 10.0f;
 			}
 
@@ -58,13 +63,13 @@ namespace GameEngine
 			m_CurrentMoveDir = Math::Vector3f::Zero();
 		}
 
-		void SetMovable() 
+		void SetType(ObjectType type)
 		{
-			m_Movable = 1;
+			m_Type = type;
 		}
 
-		bool IsMovable() const noexcept {
-			return m_Movable;
+		ObjectType GetType() const noexcept {
+			return m_Type;
 		}
 
 		void SetPosition(Math::Vector3f position, size_t frame)
@@ -84,7 +89,7 @@ namespace GameEngine
 
 
 	protected:
-		bool m_Movable = 0;
+		ObjectType m_Type;
 
 		Render::RenderObject* m_RenderObject = nullptr;
 
