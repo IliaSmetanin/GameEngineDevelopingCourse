@@ -12,7 +12,8 @@ namespace GameEngine::Core
 		{"w", KeyboardButton::W},
 		{"s", KeyboardButton::S},
 		{"d", KeyboardButton::D},
-		{"spacebar", KeyboardButton::SPACEBAR}
+		{"q", KeyboardButton::Q},
+		{"spacebar", KeyboardButton::SPACEBAR},
 	};
 
 	KeyboardButton StringToKeyboardButton(const std::string& key)

@@ -38,6 +38,12 @@ struct FrictionAmount
 	float value;
 };
 
+struct Despawn
+{
+	bool triggered;
+	float timeToDespawn;
+};
+
 using Speed = float;
 
 void RegisterEcsPhysSystems(flecs::world& world);

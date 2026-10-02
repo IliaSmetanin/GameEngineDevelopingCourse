@@ -48,13 +48,24 @@ void RegisterEcsControlSystems(flecs::world& world)
 		}
 	});
 
-	world.system<const ShootPosition, ShootSpeed, ShootState, const ControllerPtr>()
-		.each([&](flecs::entity e, const ShootPosition& pos, ShootSpeed shoot_speed, ShootState& state, const ControllerPtr& controller)
+	world.system<ShootSpeed, Bandolier, const ControllerPtr, const BulletCreator>()
+		.each([&](flecs::entity e, ShootSpeed shootSpeed, Bandolier& bandolier,
+				  const ControllerPtr& controller, const BulletCreator& bulletCreator)
 	{
-		if (controller.ptr->IsPressed("Shoot"))
+		float dt = world.delta_time();
+		bandolier.reloadTime -= dt;
+
+		if (controller.ptr->IsPressed("Shoot") && bandolier.reloadTime < 0.0f && bandolier.shells > 0)
 		{
-			state.fired = true;
-			world.entity("bullet");
+			bulletCreator.callable(shootSpeed);
+			//e.disable<BulletCreator>();
+			bandolier.reloadTime = .2f;
+			--bandolier.shells;
+		}
+
+		if (bandolier.shells == 0) {
+			bandolier.reloadTime = 2.f;
+			bandolier.shells = 6;
 		}
 	});
 }

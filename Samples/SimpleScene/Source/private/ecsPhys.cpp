@@ -71,4 +71,16 @@ void RegisterEcsPhysSystems(flecs::world& world)
 		pos.value.y += rand_flt(-shiver.value, shiver.value);
 		pos.value.z += rand_flt(-shiver.value, shiver.value);
 	});
+
+	world.system<Position, const BouncePlane, Despawn>()
+		.each([](const Position& pos, const BouncePlane& plane, Despawn& despawn)
+	{
+		constexpr float planeEpsilon = 0.1f;
+		float dotPos = plane.value.x * pos.value.x + plane.value.y * pos.value.y + plane.value.z * pos.value.z;
+
+		if (dotPos < plane.value.w + planeEpsilon) {
+			despawn.triggered = true;
+			//velocity.value.y = -velocity.value.y;
+		}
+	});
 }

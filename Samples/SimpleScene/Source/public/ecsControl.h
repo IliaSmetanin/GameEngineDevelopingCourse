@@ -38,14 +38,22 @@ struct ShootSpeed
 	}
 };
 
-//struct BulletCreator
-//{
-//	std::function<flecs::entity(ShootSpeed)> callable;
-//};
-
-struct ShootState
+struct BulletCreator
 {
-	bool fired{ false };
+	std::function<flecs::entity(ShootSpeed)> callable;
+};
+
+struct Bandolier {
+	size_t shells;
+	float reloadTime;
+};
+
+struct FirstTarget {
+	flecs::entity target;
+};
+
+struct SecondTarget {
+	flecs::entity target;
 };
 
 void RegisterEcsControlSystems(flecs::world& world);

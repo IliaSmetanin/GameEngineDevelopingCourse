@@ -43,11 +43,50 @@ void GameFramework::Init()
 		.set(CameraPtr{ Core::g_MainCamera })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
 
+	flecs::entity firstTarget = m_World.entity()
+		.set(Position{ Math::Vector3f(-8.f, 0.f, 0.f) })
+		.set(Despawn{ false, .1f })
+		.set(GeometryPtr{ RenderCore::DefaultGeometry::BigCube() })
+		.set(RenderObjectPtr{ new Render::RenderObject() });
+
+	flecs::entity secondTarget = m_World.entity()
+		.set(Position{ Math::Vector3f(8.f, 0.f, 0.f) })
+		.set(Despawn{ true, .1f })
+		.set(GeometryPtr{ RenderCore::DefaultGeometry::BigCube() })
+		.set(RenderObjectPtr{ new Render::RenderObject() });
+
 	flecs::entity gun = m_World.entity("Gun")
 		.set(ShootPosition{ Core::g_MainCamera->GetPosition() })
 		.set(ShootSpeed{ 50.f })
-		.set(ShootState{ })
-		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
+		.set(Bandolier{ 6, -0.f })
+		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) })
+		.set(BulletCreator{ [&](ShootSpeed shoot_speed)
+			{
+				return m_World.entity()
+					.set(Position{ Core::g_MainCamera->GetPosition() })
+					.set(Velocity{ Core::g_MainCamera->GetViewDir().Normalized() * static_cast<float>(shoot_speed) })
+					.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
+					.set(BouncePlane{ Math::Vector4f(0.f, 1.f, 0.f, 5.f) })
+					.set(Bounciness{ .3f })
+					.set(Despawn{ false, 5.f })
+					.set(GeometryPtr{ RenderCore::DefaultGeometry::Bullet() })
+					.set(RenderObjectPtr{ new Render::RenderObject() })
+					.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
+			}
+		});
+
+	//flecs::entity despawnAfterCollision = m_World.entity("despawnAfterCollision")
+	//	.set
+
+	//flecs::entity bullet = m_World.entity("Bullet")
+	//	.set(Position{ Math::Vector3f::Zero() })
+	//	.set(Velocity{ Math::Vector3f::Zero() })
+	//	.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
+	//	.set(GeometryPtr{ RenderCore::DefaultGeometry::Bullet() })
+	//	.set(RenderObjectPtr{ new Render::RenderObject() });
+
+	//bullet.disable<Position>();
+	//bullet.disable<Velocity>();
 }
 
 void GameFramework::Update(float dt)
@@ -64,15 +103,14 @@ void GameFramework::Update(float dt)
 	//			.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
 	//	}
 	//});
-	flecs::entity gun = m_World.lookup("Gun");
-	if (gun.get<ShootState>()->fired) {
-		m_World.lookup("bullet")
-			.set(Position{ Core::g_MainCamera->GetPosition() })
-			.set(Velocity{ Core::g_MainCamera->GetViewDir().Normalized() * static_cast<float>(gun.get<ShootSpeed>()->value) })
-			.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
-			.set(GeometryPtr{ RenderCore::DefaultGeometry::Bullet() })
-			.set(RenderObjectPtr{ new Render::RenderObject() })
-			.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
-		gun.get_mut<ShootState>()->fired = false;
-	}
+	//flecs::entity gun = m_World.lookup("Gun");
+	//if (gun.get<ShootState>()->fired) {
+	//	m_World.lookup("bullet")
+	//		.set(Position{ Core::g_MainCamera->GetPosition() })
+	//		.set(Velocity{ Core::g_MainCamera->GetViewDir().Normalized() * static_cast<float>(gun.get<ShootSpeed>()->value) })
+	//		.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) })
+	//		.set(GeometryPtr{ RenderCore::DefaultGeometry::Bullet() })
+	//		.set(RenderObjectPtr{ new Render::RenderObject() });
+	//	gun.get_mut<ShootState>()->fired = false;
+	//}
 }

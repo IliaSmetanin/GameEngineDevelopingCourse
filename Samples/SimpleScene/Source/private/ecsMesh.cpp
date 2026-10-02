@@ -24,6 +24,24 @@ void RegisterEcsMeshSystems(flecs::world& world)
 	{
 		renderObject.ptr->SetPosition(position.value, renderThread->ptr->GetMainFrame());
 	});
+
+	world.system<RenderObjectPtr, Position, Despawn>()
+		.each([&](flecs::entity e, RenderObjectPtr& renderObject, Position& pos, Despawn& despawn)
+	{
+		if (despawn.triggered) {
+			float dt = world.delta_time();
+			despawn.timeToDespawn -= dt;
+		}
+
+		if (despawn.timeToDespawn < 0.01f) {
+			pos.value.y = 1000.f;
+			renderObject.ptr->SetPosition(pos.value, renderThread->ptr->GetMainFrame());
+		}
+
+		if (despawn.timeToDespawn < -0.f) {
+			e.destruct();
+		}
+	});
 }
 
 
