@@ -13,7 +13,7 @@ using namespace GameEngine;
 void RegisterEcsControlSystems(flecs::world& world)
 {
 	world.system<Position, CameraPtr, const Speed, const ControllerPtr>()
-		.each([&](flecs::entity e, Position& position, CameraPtr& camera, const Speed& speed, const ControllerPtr& controller)
+		.each([&](Position& position, CameraPtr& camera, const Speed& speed, const ControllerPtr& controller)
 	{
 		Core::InputHandler::MouseMovevement mouseMovement = Core::InputHandler::GetInstance()->GetMouseMovement();
 
@@ -46,7 +46,7 @@ void RegisterEcsControlSystems(flecs::world& world)
 	});
 
 	world.system<const Position, Velocity, const ControllerPtr, const BouncePlane, const JumpSpeed>()
-		.each([&](const Position& pos, Velocity& vel, const ControllerPtr& controller, const BouncePlane& plane, const JumpSpeed& jump)
+		.each([](const Position& pos, Velocity& vel, const ControllerPtr& controller, const BouncePlane& plane, const JumpSpeed& jump)
 	{
 		constexpr float planeEpsilon = 0.1f;
 		if (plane.x * pos.x + plane.y * pos.y + plane.z * pos.z < plane.w + planeEpsilon)
@@ -55,6 +55,16 @@ void RegisterEcsControlSystems(flecs::world& world)
 			{
 				vel.y = jump.value;
 			}
+		}
+	});
+
+	world.system<const ShootPosition, ShootSpeed, ShootState, const ControllerPtr>()
+		.each([&](flecs::entity e, const ShootPosition& pos, ShootSpeed shoot_speed, ShootState& state, const ControllerPtr& controller)
+	{
+		if (controller.ptr->IsPressed("Shoot"))
+		{
+			state.fired = true;
+			world.entity("bullet");
 		}
 	});
 }

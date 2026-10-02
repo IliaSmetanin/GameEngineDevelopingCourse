@@ -1,6 +1,7 @@
 #pragma once
 
 #include <flecs.h>
+#include <Vector.h>
 
 namespace GameEngine::Core
 {
@@ -21,6 +22,30 @@ struct JumpSpeed
 struct CameraPtr
 {
 	GameEngine::Core::Camera* ptr;
+};
+
+struct ShootPosition
+{
+	GameEngine::Math::Vector3f value;
+};
+
+struct ShootSpeed
+{
+	float value;
+
+	explicit operator float() {
+		return value;
+	}
+};
+
+//struct BulletCreator
+//{
+//	std::function<flecs::entity(ShootSpeed)> callable;
+//};
+
+struct ShootState
+{
+	bool fired{ false };
 };
 
 void RegisterEcsControlSystems(flecs::world& world);
