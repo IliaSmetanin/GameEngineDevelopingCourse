@@ -43,15 +43,17 @@ void GameFramework::Init()
 		.set(CameraPtr{ Core::g_MainCamera })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
 
-	flecs::entity firstTarget = m_World.entity()
-		.set(Position{ Math::Vector3f(-8.f, 0.f, 0.f) })
+	flecs::entity firstTarget = m_World.entity("Target1")
+		.set(Position{ Math::Vector3f(-8.f, 10.f, 0.f) })
 		.set(Despawn{ false, .1f })
+		.set(KillAward{ 0 })
 		.set(GeometryPtr{ RenderCore::DefaultGeometry::BigCube() })
 		.set(RenderObjectPtr{ new Render::RenderObject() });
 
-	flecs::entity secondTarget = m_World.entity()
-		.set(Position{ Math::Vector3f(8.f, 0.f, 0.f) })
-		.set(Despawn{ true, .1f })
+	flecs::entity secondTarget = m_World.entity("Target2")
+		.set(Position{ Math::Vector3f(8.f, 10.f, 0.f) })
+		.set(Despawn{ false, .1f })
+		.set(KillAward{ 3 })
 		.set(GeometryPtr{ RenderCore::DefaultGeometry::BigCube() })
 		.set(RenderObjectPtr{ new Render::RenderObject() });
 
@@ -71,7 +73,8 @@ void GameFramework::Init()
 					.set(Despawn{ false, 5.f })
 					.set(GeometryPtr{ RenderCore::DefaultGeometry::Bullet() })
 					.set(RenderObjectPtr{ new Render::RenderObject() })
-					.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
+					.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) })
+					.set(Bullet{ true });
 			}
 		});
 

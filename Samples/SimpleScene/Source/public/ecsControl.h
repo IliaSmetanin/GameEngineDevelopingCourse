@@ -56,5 +56,13 @@ struct SecondTarget {
 	flecs::entity target;
 };
 
+struct KillAward {
+	size_t shells;
+};
+
+struct Bullet {
+	bool isBullet;
+};
+
 void RegisterEcsControlSystems(flecs::world& world);
 

@@ -1,3 +1,4 @@
+#include <ecsControl.h>
 #include <ecsPhys.h>
 #include <flecs.h>
 
@@ -83,4 +84,37 @@ void RegisterEcsPhysSystems(flecs::world& world)
 			//velocity.value.y = -velocity.value.y;
 		}
 	});
+
+	flecs::query<Position, const KillAward, Despawn> queryTargets =
+		world.query<Position, const KillAward, Despawn>();
+
+	flecs::query<Bandolier> queryGun = world.query<Bandolier>();
+
+	world.system<Bullet, const Position>()
+		.each([queryTargets, queryGun](flecs::entity e, Bullet, const Position& bulletPos)
+	{
+		size_t shells = 0;
+
+		queryTargets.each([&shells, bulletPos](Position& targetPos, const KillAward& killAward, Despawn& despawn)
+		{
+			GameEngine::Math::Vector3f subResult = targetPos.value - bulletPos.value;
+			float length = subResult.GetLength();
+			if (length < 3.0f) {
+				shells += (despawn.triggered) ? 0 : killAward.shells;
+				despawn.triggered = true;
+			}
+		});
+
+		if (shells > 0) {
+			queryGun.each([shells](Bandolier& bandolier)
+		{
+			bandolier.shells += shells;
+			bandolier.reloadTime = 0.01;
+			if (bandolier.shells > 6) {
+				bandolier.shells = 6;
+			}
+		});
+		}
+	});
+
 }
