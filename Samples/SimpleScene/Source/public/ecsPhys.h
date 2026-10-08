@@ -58,3 +58,20 @@ ECS_STRUCT(Speed,
 	float value;
 });
 
+ECS_STRUCT(DespawnTimer,
+{
+	bool isTriggered;
+	bool isReadyForDestruction;
+	float timeToDespawn;
+});
+
+ECS_STRUCT(CollisionTraits,
+{
+	bool isCollided;
+	float radius;
+});
+
+ECS_STRUCT(MovingOnX,
+{
+	bool isMoving;
+});

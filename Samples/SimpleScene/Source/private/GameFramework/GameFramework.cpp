@@ -47,6 +47,27 @@ void GameFramework::Init()
 		.set(Speed{ 10.f })
 		.set(CameraPtr{ Core::g_MainCamera })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
+
+	flecs::entity cubeMovingLeft = m_World.entity()
+		.set(Position{ 3.f, 5.f, -5.f })
+		.set(Velocity{ -1.f, 0.f, 0.f })
+		.set(FrictionAmount{ 0.f })
+		.set(DespawnTimer{ false, false, 3.f })
+		.set(CollisionTraits{ false, 1.f })
+		.set(MovingOnX{ true })
+		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() });
+
+
+	flecs::entity cubeMovingRight = m_World.entity()
+		.set(Position{ -3.f, 5.f, -5.f })
+		.set(Velocity{ 1.f, 0.f, 0.f })
+		.set(FrictionAmount{ 0.f })
+		.set(DespawnTimer{ false, false , 3.f })
+		.set(CollisionTraits{ false, 1.f })
+		.set(MovingOnX{ true })
+		.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+		.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() });
 }
 
 void GameFramework::RegisterComponents()
@@ -60,6 +81,9 @@ void GameFramework::RegisterComponents()
 	ECS_META_COMPONENT(m_World, ShiverAmount);
 	ECS_META_COMPONENT(m_World, FrictionAmount);
 	ECS_META_COMPONENT(m_World, Speed);
+	ECS_META_COMPONENT(m_World, DespawnTimer);
+	ECS_META_COMPONENT(m_World, CollisionTraits);
+	ECS_META_COMPONENT(m_World, MovingOnX);
 }
 
 void GameFramework::RegisterSystems()

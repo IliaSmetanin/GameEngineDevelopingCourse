@@ -60,9 +60,58 @@ local function BounceSystem(it)
     end
 end
 
+local function DespawnSystem(it)
+	for timer, ent in ecs.each(it) do
+		if timer.isTriggered then
+			timer.timeToDespawn = timer.timeToDespawn - it.delta_time;
+		end
+
+		-- Have to delay entity destruction in order to move it through RenderObjectPtr
+		if timer.isReadyForDestruction and timer.timeToDespawn < -0.12 then
+			ecs.delete(ent)
+		end
+	end
+end
+
+
+local function Length(pos1, pos2)
+	local dx = pos1.x - pos2.x
+	local dy = pos1.y - pos2.y
+	local dz = pos1.z - pos2.z
+
+	return math.sqrt(dx * dx + dy * dy + dz * dz)
+end
+
+local function CollisionSystem(it)
+	for collision1, pos1, ent1 in ecs.each(it) do
+		for collision2, pos2, ent2 in ecs.each(it) do
+			local radius_sum = collision1.radius + collision2.radius
+			if ent1 ~= ent2 and radius_sum > Length(pos1, pos2) then
+				collision1.isCollided = true
+				collision2.isCollided = true
+			end
+		end
+	end
+end
+
+-- local collision_query = ecs.query("CollisionTraits, Position")
+
+local function CollisionTriggerSystem(it)
+	for collision, despawn, velocity in ecs.each(it) do
+		if collision.isCollided then
+			velocity.x = -velocity.x
+			despawn.isTriggered = true
+			collision.isCollided = false;
+		end
+	end
+end
+
 ecs.system(move, "Move", ecs.OnUpdate, "Position, Velocity")
 ecs.system(gravity, "grav", ecs.OnUpdate, "Position, Velocity, Gravity, BouncePlane")
 ecs.system(FrictionSystem, "FrictionSystem", ecs.OnUpdate, "Velocity, FrictionAmount")
 ecs.system(ShiverSystem, "ShiverSystem", ecs.OnUpdate, "Position, ShiverAmount")
 ecs.system(BounceSystem, "BounceSystem", ecs.OnUpdate, "Position, Velocity, BouncePlane, Bounciness")
+ecs.system(DespawnSystem, "Countdown", ecs.OnUpdate, "DespawnTimer")
+ecs.system(CollisionSystem, "Collision", ecs.OnUpdate, "CollisionTraits, Position")
+ecs.system(CollisionTriggerSystem, "CollisionTrigger", ecs.OnUpdate, "CollisionTraits, DespawnTimer, Velocity, MovingOnX")
 
