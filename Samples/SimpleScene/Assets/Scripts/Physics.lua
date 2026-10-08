@@ -82,11 +82,20 @@ local function Length(pos1, pos2)
 	return math.sqrt(dx * dx + dy * dy + dz * dz)
 end
 
+local collision_query = ecs.query("CollisionTraits, Position")
+
 local function CollisionSystem(it)
+	local dt = it.delta_time;
+	local it_copy = it
+
 	for collision1, pos1, ent1 in ecs.each(it) do
-		for collision2, pos2, ent2 in ecs.each(it) do
+		for collision2, pos2, ent2 in ecs.each(it_copy) do
+			collision1.delay = collision1.delay - dt
+			collision2.delay = collision2.delay - dt
+
 			local radius_sum = collision1.radius + collision2.radius
-			if ent1 ~= ent2 and radius_sum > Length(pos1, pos2) then
+			
+			if ent1 ~= ent2 and radius_sum > Length(pos1, pos2) and collision1.delay < 0.0 and collision2.delay < 0.0 then
 				collision1.isCollided = true
 				collision2.isCollided = true
 			end
@@ -94,14 +103,27 @@ local function CollisionSystem(it)
 	end
 end
 
--- local collision_query = ecs.query("CollisionTraits, Position")
+
 
 local function CollisionTriggerSystem(it)
-	for collision, despawn, velocity in ecs.each(it) do
+	for collision, despawn, velocity, ent in ecs.each(it) do
 		if collision.isCollided then
 			velocity.x = -velocity.x
 			despawn.isTriggered = true
-			collision.isCollided = false;
+			-- ecs.remove(ent, CollisionTraits)
+			collision.isCollided = false
+			collision.delay = 0.3;
+		end
+	end
+end
+
+local function GettingHitSystem(it)
+	for collision, velocity, ent in ecs.each(it) do
+		if collision.isCollided then
+			velocity.y = velocity.y + 5.0
+			-- ecs.remove(ent, CollisionTraits)
+			collision.isCollided = false
+			collision.delay = 0.3;
 		end
 	end
 end
@@ -114,4 +136,6 @@ ecs.system(BounceSystem, "BounceSystem", ecs.OnUpdate, "Position, Velocity, Boun
 ecs.system(DespawnSystem, "Countdown", ecs.OnUpdate, "DespawnTimer")
 ecs.system(CollisionSystem, "Collision", ecs.OnUpdate, "CollisionTraits, Position")
 ecs.system(CollisionTriggerSystem, "CollisionTrigger", ecs.OnUpdate, "CollisionTraits, DespawnTimer, Velocity, MovingOnX")
+ecs.system(GettingHitSystem, "Hit", ecs.OnUpdate, "CollisionTraits, Velocity, Target")
+
 
