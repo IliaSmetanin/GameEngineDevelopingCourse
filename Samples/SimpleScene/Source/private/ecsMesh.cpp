@@ -17,6 +17,16 @@ void RegisterEcsMeshSystems(flecs::world& world)
 	{
 		renderObject.ptr->SetPosition(Math::Vector3f(position.x, position.y, position.z), renderThread->ptr->GetMainFrame());
 	});
+
+	world.system<EntitySystem::ECS::RenderObjectPtr, Position, DespawnTimer>()
+		.each([](EntitySystem::ECS::RenderObjectPtr& renderObject, Position& position, DespawnTimer& timer)
+	{
+		if (timer.timeToDespawn < -0.01f)
+		{
+			renderObject.ptr->SetPosition(Math::Vector3f(position.x, 1000.f, position.z), renderThread->ptr->GetMainFrame());
+			timer.isReadyForDestruction = true;
+		}
+	});
 }
 
 

@@ -49,5 +49,18 @@ void RegisterEcsControlSystems(flecs::world& world)
 			}
 		}
 	});
+
+	world.system<ShootSpeed, const ControllerPtr, const BulletCreator, Reload>()
+		.each([&world](ShootSpeed shootSpeed, const ControllerPtr& controller, const BulletCreator& bulletCreator, Reload& reload)
+	{
+		float dt = world.delta_time();
+		reload.reload_time -= dt;
+
+		if (controller.ptr->IsPressed("Shoot") && reload.reload_time < 0.f) {
+			bulletCreator.callable(shootSpeed);
+			reload.reload_time = .2f;
+		}
+	});
+
 }
 
