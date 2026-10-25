@@ -82,8 +82,8 @@ void GameFramework::Init()
 					.set(Gravity{ 0.f, -9.8065f, 0.f })
 					.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
 					.set(Bounciness{ .3f })
-					//.set(Despawn{ false, 5.f })
-					.set(CollisionTraits{ 0, .15f, -0.f })
+					.set(DespawnTimer{ true, false , 3.f })
+					.set(CollisionTraits{ false, .15f, -0.f })
 					.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::Bullet() })
 					.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() });
 					//.set(Bullet{ true });
