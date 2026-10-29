@@ -71,6 +71,19 @@ void GameFramework::RegisterComponentsReflection()
 
 	m_World.component<JumpSpeed>()
 		.member<float>("value");
+
+	m_World.component<DespawnTimer>()
+		.member<bool>("isTriggered")
+		.member<bool>("isReadyForDestruction")
+		.member<float>("timeToDespawn");
+
+	m_World.component<CollisionTraits>()
+		.member<bool>("isCollided")
+		.member<float>("radius")
+		.member<float>("delay");
+
+	m_World.component<MovingOnX>()
+		.member<bool>("isMoving");
 }
 
 void GameFramework::RegisterSystems()
