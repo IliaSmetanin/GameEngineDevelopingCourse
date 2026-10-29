@@ -51,3 +51,22 @@ struct Speed
 	float value;
 };
 
+
+struct DespawnTimer
+{
+	bool isTriggered;
+	bool isReadyForDestruction;
+	float timeToDespawn;
+};
+
+struct CollisionTraits
+{
+	bool isCollided;
+	float radius;
+	float delay;
+};
+
+struct MovingOnX
+{
+	bool isMoving;
+};

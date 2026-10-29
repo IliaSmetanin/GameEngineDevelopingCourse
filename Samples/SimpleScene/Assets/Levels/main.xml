@@ -1,4 +1,6 @@
 <level name="SomeRandomName">
     <entity Name="BounceCube" Position="2.0,0.0,0.0" Velocity="0.0,3.0,0.0" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="1.0" GeometryPtr="Cube"/>
     <entity Name="ControllableCube" Position="-2.0,0.0,0.0" Velocity="0.0,0.0,0.0" Speed="10" FrictionAmount="0.9" JumpSpeed="10" Gravity="0.0,-9.8,0.0" BouncePlane="0.0,1.0,0.0,5.0" Bounciness="0.3" GeometryPtr="Cube" ControllerPtr="Input_default.ini"/>
+    <entity Name="MovingLeft" Position="3.0,5.0,-5.0" Velocity="-1.0,0.0,0.0" DespawnTimer="0,0,3.0" CollisionTraits="0,1.0,-0.0" MovingOnX="1" GeometryPtr="Cube"/>
+    <entity Name="MovingRight" Position="-3.0,5.0,-5.0" Velocity="1.0,0.0,0.0" DespawnTimer="0,0,3.0" CollisionTraits="0,1.0,-0.0" MovingOnX="1" GeometryPtr="Cube"/>
 </level>
