@@ -1,6 +1,7 @@
 #include <GameEditor.h>
 
 #include <Debug/Console.h>
+#include <ECS/ecsSystems.h>
 #include <EditorECS/ecsEditor.h>
 #include <Camera.h>
 #include <DefaultGeometry.h>
@@ -84,6 +85,12 @@ namespace GameEngine
 
 		m_EntityManager->Update(dt);
 
+		if (toCreate)
+		{
+			CreateDefaultObject();
+			toCreate = false;
+		}
+
 		// We want the camera to move only when we are clicking RMB outside the interface
 		if (!GUI::GUIContext::GetInstance()->IsUIHovered() && !Core::g_MainWindowsApplication->IsMouseCaptured() && Core::InputHandler::GetInstance()->IsKeyPressed(Core::MouseButton::RMB) && Core::g_MainWindowsApplication->IsFocused())
 		{
@@ -97,5 +104,19 @@ namespace GameEngine
 
 		// Should be updated last since a lot of logic is binned to the input handler
 		Core::InputHandler::GetInstance()->Update(dt);
+	}
+
+	void GameEditor::CreateDefaultObject()
+	{
+		static size_t id = 1;
+		static float x = -6.f;
+
+		std::string name = "Default Object" + std::to_string(id);
+		std::string position = std::to_string(x) + ",0.0,0.0";
+
+		static_cast<GameEngine::Editor::LevelEditor*>(m_UIWindows.back())->AddLevelObject(name, position, "Cube", m_EntityManager->GetWorld());
+		x -= 4.f;
+		++id;
+
 	}
 }

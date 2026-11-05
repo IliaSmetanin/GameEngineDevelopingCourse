@@ -9,6 +9,9 @@ namespace GameEngine::World
 
 	void Level::AddLevelObject(const LevelObject& levelObject)
 	{
+		if (m_LevelObjectList.empty()) {
+			m_LevelObjectList.reserve(10);
+		}
 		m_LevelObjectList.push_back(levelObject);
 	}
 }
