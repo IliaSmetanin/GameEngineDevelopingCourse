@@ -20,9 +20,13 @@ namespace GameEngine
 			std::function<bool()> PlatformLoopFunc
 		);
 
+
 	public:
 		void Run();
 		void Update(float dt);
+
+	private:
+		void CreateDefaultObject();
 
 	private:
 		Core::Timer m_Timer;

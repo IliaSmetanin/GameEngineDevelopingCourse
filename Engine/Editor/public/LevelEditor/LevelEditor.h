@@ -7,6 +7,8 @@
 
 namespace GameEngine
 {
+	inline bool toCreate = false;
+
 	namespace Editor
 	{
 		class LevelEditor final : public GUI::UIWindow
@@ -16,6 +18,8 @@ namespace GameEngine
 			LevelEditor(flecs::world& world);
 
 		public:
+			void AddLevelObject(const std::string& name, const std::string& position, const std::string& geometry, flecs::world& world);
+
 			virtual void Draw() override;
 			virtual void Update(float dt) override;
 			virtual const char* GetName() const override { return "Level Editor"; }

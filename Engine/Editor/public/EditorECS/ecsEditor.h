@@ -26,5 +26,20 @@ namespace GameEngine::EntitySystem::EditorECS
 		float value;
 	};
 
+	//struct RenderObjectPtr
+	//{
+	//	GameEngine::Render::RenderObject* ptr = nullptr;
+
+	//	GameEngine::Render::RenderObject** GetAddressOf()
+	//	{
+	//		return &ptr;
+	//	}
+	//};
+
+	//struct GeometryPtr
+	//{
+	//	GameEngine::RenderCore::Geometry* ptr;
+	//};
+
 	void RegisterEditorEcsControlSystems(flecs::world& world);
 }
